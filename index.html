@@ -21,6 +21,7 @@
             }
             Vue.prototype = {
                 constructor: Vue,
+                //拿到所有含有v-的元素
                 bindNodesArr() {
                     let arr = []
                     let childs = this.el.childNodes

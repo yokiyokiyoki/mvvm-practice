@@ -1,7 +1,7 @@
 {
   "name": "yoki",
   "version": "1.0.0",
-  "description": "练习",
+  "description": "mvvm-practice",
   "main": "index.js",
   "scripts": {
     "start": "http-server -a 127.0.0.1 -p 8090"

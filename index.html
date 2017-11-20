@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="app">
+        <input type="text" v-model="name">
+        <p v-text="name"></p>
+    </div>
+    <script type="text/javascript">
+        (function (window, undefined) {
+            let Vue = function (opt = {}) {
+                this.el = document.querySelector(opt.el)
+                this.data = opt.data || {}
+            }
+            Vue.prototype = {
+                constructor: Vue,
+                bindNodesArr() {
+                    let arr = []
+                    let childs = this.el.childNodes
+                    childs.forEach((item) => {
+                        if (item.nodeType == 1) {
+                            itemAttributesArr = Array.of(...item.attributes)
+                            itemAttributesArr.forEach((childItem, childIndex) => {
+                                childItem.nodeName.includes('v-') && arr.push(item)
+                            })
+                        }
+                    })
+                    return arr
+                },
+                init() {
+                    console.log(this.bindNodesArr())
+                }
+            }
+            window.Vue = Vue
+        })(window, undefined)
+        let app = new Vue({
+            el: '.app'
+        })
+        app.init()
+    </script>
+</body>
+
+</html>

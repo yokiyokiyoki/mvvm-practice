@@ -15,7 +15,8 @@
         <p>- vue特点是不能新增不存在的属性，不存在的属性没有get和set</p>
         <p>- 深度响应，因为每次赋予一个新对象时会给这个新对象增加defineProperty（数据劫持）</p>
         <p>为什么要做数据代理</p>
-        <p>数据代理就是让我们每次不用写一长串，如vm._data.a.b,直接vm.a.b就可以了</p>
+        <p>- 数据代理就是让我们每次不用写一长串，如vm._data.a.b,直接vm.a.b就可以了</p>
+        <p>数据编译就是把{{}}里内容解析出来</p>
     </div>
     <script type="text/javascript">
         //创建一个mvvm构造函数
@@ -43,6 +44,9 @@
                     }
                 })
             }
+
+            //数据编译
+            new Compile(this.options.el, this)
         }
 
 
@@ -77,6 +81,20 @@
             //防止递归溢出
             if (!data || typeof data != 'object') return
             return new Observe(data)
+        }
+        //Compile构造函数
+        function Compile(el, vm) {
+            //将el挂载到实例上，方便调用
+            vm.$el = document.querySelector(el)
+            //在el范围内，把所有内容都拿到，当然不能一个个拿
+            //可以选择移到内存中去然后放入文档碎片中，节省开销
+            let fragment = document.createDocumentFragment()
+            let child = vm.$el.firstChild
+            while (child) {// 此时将el中的内容放入内存中
+                fragment.appendChild(child);
+                child = el.firstChild;
+            }
+
         }
     </script>
 </body>

@@ -10,44 +10,10 @@
 
 <body>
     <div class="app">
-        <input type="text" v-model="name">
-        <p v-text="name"></p>
+
     </div>
     <script type="text/javascript">
-        (function (window, undefined) {
-            let Vue = function (opt = {}) {
-                this.el = document.querySelector(opt.el)
-                this.data = opt.data || {}
-            }
-            Vue.prototype = {
-                constructor: Vue,
-                //拿到所有含有v-的元素
-                bindNodesArr() {
-                    let arr = []
-                    let childs = this.el.childNodes
-                    childs.length && childs.forEach((item) => {
-                        //判断是否是元素节点
-                        if (item.nodeType == 1) {
-                            //类数组对象变成数组，然后才可以使用数组的方法
-                            itemAttributesArr = Array.of(...item.attributes)
-                            itemAttributesArr.length && itemAttributesArr.forEach((childItem,
-                                childIndex) => {
-                                childItem.nodeName.includes('v-') && arr.push(item)
-                            })
-                        }
-                    })
-                    return arr
-                },
-                init() {
-                    console.log(this.bindNodesArr())
-                }
-            }
-            window.Vue = Vue
-        })(window, undefined)
-        let app = new Vue({
-            el: '.app'
-        })
-        app.init()
+
     </script>
 </body>
 

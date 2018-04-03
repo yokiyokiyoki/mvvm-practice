@@ -28,6 +28,40 @@
             //数据劫持
             observe(data)
         }
+
+
+        //创建一个Observe构造函数
+        //写数据劫持的主要逻辑
+        function Observe(data) {
+            //所谓数据劫持就是给对象增加get和set
+            //先遍历一遍对象再说
+            for (let key in data) {
+                let val = data[key]
+                observe(val)//递归向下查找，实现深度的数据劫持
+                Object.defineProperty(data, key, {
+                    configurable: true,
+                    get() {
+                        return val
+                    },
+                    set(newVal) {//更改值的时候
+                        if (val === newVal) { //新旧一样就不管
+                            return
+                        }
+                        val = newVal
+                        observe(newVal)//当设置为新值后，也需要把新值再去定义成属性，也进行数据劫持（这里专门针对对象而言）
+                    }
+                })
+            }
+        }
+        //外面再写个函数
+        //不用每次调用都写个new
+        //方便递归调用
+        function observe(data) {
+            //如果不是对象就return
+            //防止递归溢出
+            if (!data || typeof data != 'object') return
+            return new Observe(data)
+        }
     </script>
 </body>
 

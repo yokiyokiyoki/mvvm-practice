@@ -10,10 +10,24 @@
 
 <body>
     <div class="app">
-
+        <p>为什么要做数据劫持</p>
+        <p>观察对象，给对象增加Object.defineProerty</p>
+        <p>vue特点是不能新增不存在的属性，不存在的属性没有get和set</p>
+        <p>深度响应，因为每次赋予一个新对象时会给这个新对象增加defineProperty（数据劫持）</p>
     </div>
     <script type="text/javascript">
+        //创建一个mvvm构造函数
+        //options默认赋值==options||{{}}
+        function Mvvm(options = {}) {
+            //vm.$options Vue将所有属性挂载到上面
+            //我们也将所有属性挂到$options
+            this.$options = options
+            //this._data和vue一样
+            let data = this._data = this.$options.data;
 
+            //数据劫持
+            observe(data)
+        }
     </script>
 </body>
 

@@ -11,9 +11,11 @@
 <body>
     <div class="app">
         <p>为什么要做数据劫持</p>
-        <p>观察对象，给对象增加Object.defineProerty</p>
-        <p>vue特点是不能新增不存在的属性，不存在的属性没有get和set</p>
-        <p>深度响应，因为每次赋予一个新对象时会给这个新对象增加defineProperty（数据劫持）</p>
+        <p>- 观察对象，给对象增加Object.defineProerty</p>
+        <p>- vue特点是不能新增不存在的属性，不存在的属性没有get和set</p>
+        <p>- 深度响应，因为每次赋予一个新对象时会给这个新对象增加defineProperty（数据劫持）</p>
+        <p>为什么要做数据代理</p>
+        <p>数据代理就是让我们每次不用写一长串，如vm._data.a.b,直接vm.a.b就可以了</p>
     </div>
     <script type="text/javascript">
         //创建一个mvvm构造函数
@@ -27,6 +29,20 @@
 
             //数据劫持
             observe(data)
+
+            //数据代理
+            //this代理了this._data
+            for (let key in data) {
+                Object.defineProperty(this, key, {
+                    configurable: false,
+                    get() {
+                        return this._data[key]
+                    },
+                    set(newVal) {
+                        this._data[key] = newVal
+                    }
+                })
+            }
         }
 
 

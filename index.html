@@ -19,6 +19,7 @@
         <p>数据编译就是把{{}}里内容解析出来</p>
         <p>数据可以进行编译后，但是我们手动修改后的数据并没有在页面上发生改变，这时候我们需要用到发布订阅模式</p>
         <p>{{a}}</p>
+        <p>{{b.c}}</p>
     </div>
     <script type="text/javascript">
         //创建一个mvvm构造函数
@@ -91,22 +92,25 @@
             //在el范围内，把所有内容都拿到，当然不能一个个拿
             //可以选择移到内存中去然后放入文档碎片中，节省开销
             let fragment = document.createDocumentFragment()
-            let child = vm.$el.firstChild
-            while (child) {// 此时将el中的内容放入内存中
+            while (child = vm.$el.firstChild) {// 此时将el中的内容放入内存中
                 fragment.appendChild(child);
-                child = el.firstChild;
             }
             //对el的内容进行替换
             function replace(frag) {
                 //先把dom节点变成数组
                 Array.from(frag.childNodes).forEach((node) => {
                     let txt = node.textContent
-                    let reg = /\{\{(.*)\{\}/  //正则匹配{{}}
+                    let reg = /\{\{(.*)\}\}/  //正则匹配{{}}
                     if (node.nodeType === 3 && reg.test(txt)) {//是文本节点又有大括号的情况{{}}
                         console.log(RegExp.$1)//匹配到的第一个分组，类似a.b,c
+                        if (RegExp.$1 === '') {
+                            //如果匹配到的是这样{{}},里面没东西的，就直接return
+                            return
+                        }
                         let arr = RegExp.$1.split('.')
+                        //这里巧妙的运用了循环赋值，可是实现递归拿到里面的this.a.b
                         let val = vm
-                        arr.forEach(item => {
+                        arr.forEach(key => {
                             val = val[key] //this.a.b
                         })
                         //替换字符串，并且去掉首尾空格
@@ -128,7 +132,10 @@
         let mvvm = new Mvvm({
             el: '.app',
             data: {
-                a: 1
+                a: 1,
+                b: {
+                    c: 2
+                }
             }
         })
     </script>

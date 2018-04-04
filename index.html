@@ -94,7 +94,32 @@
                 fragment.appendChild(child);
                 child = el.firstChild;
             }
-
+            //对el的内容进行替换
+            function replace(frag) {
+                //先把dom节点变成数组
+                Array.from(frag.childNodes).forEach((node) => {
+                    let txt = node.textContent
+                    let reg = /\{\{(.*)\{\}/  //正则匹配{{}}
+                    if (node.nodeType === 3 && reg.test(txt)) {//是文本节点又有大括号的情况{{}}
+                        console.log(RegExp.$1)//匹配到的第一个分组，类似a.b,c
+                        let arr = RegExp.$1.split('.')
+                        let val = vm
+                        arr.forEach(item => {
+                            val = val[key] //this.a.b
+                        })
+                        //替换字符串，并且去掉首尾空格
+                        node.textContent = txt.replace(reg, val).trim()
+                    }
+                    //如果还有子节点，那么继续递归replace
+                    if (node.childNodes && node.childNodes.length) {
+                        replace(node)
+                    }
+                })
+            }
+            //替换文档碎片的内容
+            replace(fragment)
+            //将文档碎片放入el里
+            vm.$el.appendChild(fragment)
         }
     </script>
 </body>

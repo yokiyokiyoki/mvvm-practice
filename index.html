@@ -128,6 +128,26 @@
                             node.textContent = txt.replace(reg, newVal).trim()
                         })
                     }
+                    if (node.nodeType === 1) {//如果是元素节点
+                        let nodeAttr = node.attributes //获取dom上所有属性，是个类数组
+                        Array.from(nodeAttr).forEach((attr) => {
+                            let name = attr.name //v-model type
+                            let exp = attr.value  //text
+                            if (name.includes('v-')) {
+                                node.value = vm[exp] //this.c=2,给节点赋值
+                            }
+                            //监听变化
+                            new Watch(vm, exp, (newVal) => {
+                                node.value = newVal // 当watcher触发时会自动将内容放入输入框中
+                            })
+                            node.addEventListener('input', e => {
+                                let newVal = e.target.value
+                                //相当于给this.c一个新值
+                                //而值的改变会调用set，set中又会调用notify,notify中调用watcher的update方法
+                                vm[exp] = newVal
+                            })
+                        })
+                    }
                     //如果还有子节点，那么继续递归replace
                     if (node.childNodes && node.childNodes.length) {
                         replace(node)

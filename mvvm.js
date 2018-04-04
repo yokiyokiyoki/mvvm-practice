@@ -24,8 +24,12 @@ function Mvvm(options = {}) {
     });
   }
 
+  //初始化computed,将this指向实例
+  options.computed && initComputed.call(this);
   //数据编译
   new Compile(this.$options.el, this);
+  //所有事情处理好后执行mounted钩子函数
+  options.mounted && options.mounted.call(this);
 }
 
 //创建一个Observe构造函数
@@ -104,6 +108,27 @@ function Compile(el, vm) {
           node.textContent = txt.replace(reg, newVal).trim();
         });
       }
+      if (node.nodeType === 1) {
+        //如果是元素节点
+        let nodeAttr = node.attributes; //获取dom上所有属性，是个类数组
+        Array.from(nodeAttr).forEach(attr => {
+          let name = attr.name; //v-model type
+          let exp = attr.value; //text
+          if (name.includes("v-")) {
+            node.value = vm[exp]; //this.c=2,给节点赋值
+          }
+          //监听变化
+          new Watch(vm, exp, newVal => {
+            node.value = newVal; // 当watcher触发时会自动将内容放入输入框中
+          });
+          node.addEventListener("input", e => {
+            let newVal = e.target.value;
+            //相当于给this.c一个新值
+            //而值的改变会调用set，set中又会调用notify,notify中调用watcher的update方法
+            vm[exp] = newVal;
+          });
+        });
+      }
       //如果还有子节点，那么继续递归replace
       if (node.childNodes && node.childNodes.length) {
         replace(node);
@@ -155,3 +180,22 @@ Watcher.prototype.update = function() {
   });
   this.fn(val);
 };
+//计算属性
+function initComputed() {
+  let vm = this;
+  let computed = this.$options.computed; //从options上拿到computed属性 {sum:f,name:f}
+  //先转成数组
+  Object.keys(computed).forEach(key => {
+    //key就是sum，name
+    Object.defineProperty(vm, key, {
+      //这里判断computed里的key是对象还是函数
+      // 如果是函数直接调用get方法
+      //如果是对象的话，手动调一下get方法即可
+      //如：sum(){return this.a+this.b}，他们获取a和b的值就会调用get方法
+      //所以不需要new Watcher去监听变化了
+      get:
+        typeof computed[key] === "function" ? computed[key] : computed[key].get,
+      set() {}
+    });
+  });
+}

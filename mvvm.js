@@ -27,7 +27,7 @@ function Mvvm(options = {}) {
   //初始化computed,将this指向实例
   options.computed && initComputed.call(this);
   //数据编译
-  new Compile(this.$options.el, this);
+  this.$compile = new Compile(this.$options.el || document.body, this);
   //所有事情处理好后执行mounted钩子函数
   options.mounted && options.mounted.call(this);
 }

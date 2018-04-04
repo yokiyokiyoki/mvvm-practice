@@ -59,6 +59,8 @@
         //创建一个Observe构造函数
         //写数据劫持的主要逻辑
         function Observe(data) {
+            //构造一个事件池
+            let dep = new Dep()
             //所谓数据劫持就是给对象增加get和set
             //先遍历一遍对象再说
             for (let key in data) {
@@ -67,6 +69,7 @@
                 Object.defineProperty(data, key, {
                     configurable: true,
                     get() {
+                        Dep.target && dep.addSub(Dep.target)  //将watcher添加到订阅事件种[watcher]
                         return val
                     },
                     set(newVal) {//更改值的时候
@@ -75,6 +78,7 @@
                         }
                         val = newVal
                         observe(newVal)//当设置为新值后，也需要把新值再去定义成属性，也进行数据劫持（这里专门针对对象而言）
+                        dep.notify() //让所有的wtacher的update方法执行就行
                     }
                 })
             }
@@ -118,6 +122,11 @@
                         })
                         //替换字符串，并且去掉首尾空格
                         node.textContent = txt.replace(reg, val).trim()
+                        //监听变化
+                        //给Watcher再添加两个参数，用来取新的值（newVal）给回调函数传参
+                        new Watcher(vm, RegExp.$1, newVal => {
+                            node.textContent = txt.replace(reg, newVal).trim()
+                        })
                     }
                     //如果还有子节点，那么继续递归replace
                     if (node.childNodes && node.childNodes.length) {
@@ -145,21 +154,33 @@
             }
         }
         // 监听函数
-        function Watcher(fn) {
+        function Watcher(vm, exp, fn) {
             this.fn = fn;//将fn放在实例上
+            this.vm = vm
+            this.exp = exp
+            //添加一个事件，先定义一个属性
+            Dep.target = this
+            let arr = exp.split('.');
+            let val = vm
+            arr.forEach(key => {//取值
+                val = val[key] //获取到this.a.b，默认就会调用get方法
+            })
+            Dep.target = null
         }
         //通过watch这个类创建的实例，都有update方法
         Watcher.prototype.update = function () {
-            this.fn()
+            //notify的时候值已经更改了
+            //再通过vm，exp来获取新的值
+            let arr = this.exp.split('.')
+            let val = this.vm
+            arr.forEach((key) => {
+                val = val[key] //通过get获取新的值
+            })
+            this.fn(val)
         }
-        let watcher = new Watcher(() => console.log(123))
-        let dep = new Dep()
-        dep.addSub(watcher)
-        dep.addSub(watcher)
-        dep.notify()
     </script>
     <script type="text/javascript">
-        let mvvm = new Mvvm({
+        window.mvvm = new Mvvm({
             el: '.app',
             data: {
                 a: 1,

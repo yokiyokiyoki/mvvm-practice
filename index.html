@@ -17,6 +17,8 @@
         <p>为什么要做数据代理</p>
         <p>- 数据代理就是让我们每次不用写一长串，如vm._data.a.b,直接vm.a.b就可以了</p>
         <p>数据编译就是把{{}}里内容解析出来</p>
+        <p>数据可以进行编译后，但是我们手动修改后的数据并没有在页面上发生改变，这时候我们需要用到发布订阅模式</p>
+        <p>{{a}}</p>
     </div>
     <script type="text/javascript">
         //创建一个mvvm构造函数
@@ -46,7 +48,7 @@
             }
 
             //数据编译
-            new Compile(this.options.el, this)
+            new Compile(this.$options.el, this)
         }
 
 
@@ -121,6 +123,14 @@
             //将文档碎片放入el里
             vm.$el.appendChild(fragment)
         }
+    </script>
+    <script type="text/javascript">
+        let mvvm = new Mvvm({
+            el: '.app',
+            data: {
+                a: 1
+            }
+        })
     </script>
 </body>
 

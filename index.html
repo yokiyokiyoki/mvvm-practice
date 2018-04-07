@@ -22,26 +22,32 @@
         <p>现在我们订阅一个事件，当数据改变需要重新刷新视图，这就需要在replace替换的逻辑里处理</p>
         <p>通过new Watcher把数据订阅一下，数据一变就执行改变内容的操作</p>
         <p>dep,watcher,complier是实现mvvm策略的核心</p>
-        <p>{{a}}</p>
-        <p>{{b.c}}</p>
-        <p>计算属性{{d}}</p>
+        <p>{{name}}</p>
+        <p>{{mvvm.data}}</p>
+        <p>计算属性{{a}}</p>
+        <p>计算属性{{b}}</p>
     </div>
     <script src="./mvvm.js"></script>
     <script type="text/javascript">
         window.mvvm = new Mvvm({
             el: '.app',
             data: {
-                a: 1,
-                b: {
-                    c: 2
+                name: 'yoki',
+                mvvm: {
+                    data: 1
                 },
             },
             mounted() {
                 console.log('mounted钩子函数')
             },
             computed: {
-                d() {
-                    return this.a + this.b.c
+                a() {
+                    return this.name + this.mvvm.data
+                },
+                b: {
+                    get() {
+                        return this.name
+                    }
                 }
             }
         })

@@ -1,3 +1,5 @@
+// 该版本实现了计算属性的get，mounted钩子，数据劫持，数据代理，模板编译{{}},v-model双向绑定
+
 //创建一个mvvm构造函数
 //options默认赋值==options||{{}}
 function Mvvm(options = {}) {

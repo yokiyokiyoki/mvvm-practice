@@ -24,6 +24,7 @@
         <p>dep,watcher,complier是实现mvvm策略的核心</p>
         <p>{{a}}</p>
         <p>{{b.c}}</p>
+        <p>计算属性{{d}}</p>
     </div>
     <script src="./mvvm.js"></script>
     <script type="text/javascript">
@@ -33,6 +34,14 @@
                 a: 1,
                 b: {
                     c: 2
+                },
+            },
+            mounted() {
+                console.log('mounted钩子函数')
+            },
+            computed: {
+                d() {
+                    return this.a + this.b.c
                 }
             }
         })

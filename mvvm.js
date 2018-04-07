@@ -45,10 +45,12 @@ function Observe(data) {
     Object.defineProperty(data, key, {
       configurable: true,
       get() {
+        console.log("getter");
         Dep.target && dep.addSub(Dep.target); //将watcher添加到订阅事件种[watcher]
         return val;
       },
       set(newVal) {
+        console.log("setter");
         //更改值的时候
         if (val === newVal) {
           //新旧一样就不管
@@ -57,6 +59,7 @@ function Observe(data) {
         val = newVal;
         observe(newVal); //当设置为新值后，也需要把新值再去定义成属性，也进行数据劫持（这里专门针对对象而言）
         dep.notify(); //让所有的wtacher的update方法执行就行
+        console.log(dep);
       }
     });
   }

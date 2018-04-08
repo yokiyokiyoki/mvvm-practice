@@ -22,16 +22,17 @@
         <p>现在我们订阅一个事件，当数据改变需要重新刷新视图，这就需要在replace替换的逻辑里处理</p>
         <p>通过new Watcher把数据订阅一下，数据一变就执行改变内容的操作</p>
         <p>dep,watcher,complier是实现mvvm策略的核心</p>
-        <p>{{name}}</p>
+        <p>{{name}}1{{mvvm.data}}</p>
         <p>{{mvvm.data}}</p>
         <p>计算属性{{a}}</p>
         <p>计算属性{{b}}</p>
     </div>
-    <script src="./mvvm0.1.0.js"></script>
+    <script src="./mvvm0.1.1.js"></script>
     <script type="text/javascript">
         window.mvvm = new Mvvm({
             el: '.app',
             data: {
+                el: '元素',
                 name: 'yoki',
                 mvvm: {
                     data: 1
